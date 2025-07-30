@@ -40,23 +40,39 @@
       color: white;
       border: none;
       cursor: pointer;
+      font-size: 14px;
+      padding: 6px 12px;
+      width: auto;
     }
 
     button:hover {
       background-color: #555;
     }
 
-    .checkbox-group {
-      margin: 10px 0;
+    .slider-label {
+      margin-top: 10px;
     }
 
-    .checkbox-group label {
-      display: block;
+    .radio-group {
       margin: 8px 0;
     }
 
-    .slider-label {
-      margin-top: 10px;
+    .radio-group label {
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    .question-block {
+      margin: 15px 0;
+    }
+
+    #prep {
+      width: auto;
+      padding: 6px;
+    }
+
+    #saveButton {
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -85,11 +101,37 @@
 
   <!-- 3. Kontrollfragen -->
   <h3>📋 Bildqualität</h3>
-  <div class="checkbox-group">
-    <label><input type="checkbox" id="sharp"> Ist das Bild scharf und gut beleuchtet?</label>
-    <label><input type="checkbox" id="angle"> Ist das Bild in einem schrägen Winkel von ca. 45° aufgenommen?</label>
-    <label><input type="checkbox" id="full"> Ist das Essen vollständig im Bild zu sehen ( = kein Millimeter ist abgeschnitten)?</label>
-    <label><input type="checkbox" id="noother"> Ist sonstiges Essen oder Trinken im Bild zu sehen?</label>
+
+  <div class="question-block">
+    Ist das Bild scharf und gut beleuchtet?<br>
+    <div class="radio-group">
+      <label><input type="radio" name="sharp" value="yes"> Ja</label>
+      <label><input type="radio" name="sharp" value="no"> Nein</label>
+    </div>
+  </div>
+
+  <div class="question-block">
+    Ist das Bild in einem schrägen Winkel von ca. 45° aufgenommen?<br>
+    <div class="radio-group">
+      <label><input type="radio" name="angle" value="yes"> Ja</label>
+      <label><input type="radio" name="angle" value="no"> Nein</label>
+    </div>
+  </div>
+
+  <div class="question-block">
+    Ist das Essen vollständig im Bild zu sehen ( = kein Millimeter ist abgeschnitten)?<br>
+    <div class="radio-group">
+      <label><input type="radio" name="full" value="yes"> Ja</label>
+      <label><input type="radio" name="full" value="no"> Nein</label>
+    </div>
+  </div>
+
+  <div class="question-block">
+    Ist sonstiges Essen oder Trinken im Bild zu sehen?<br>
+    <div class="radio-group">
+      <label><input type="radio" name="noother" value="no"> Nein</label>
+      <label><input type="radio" name="noother" value="yes"> Ja</label>
+    </div>
   </div>
 
   <!-- 4. Zubereitungsart -->
@@ -108,7 +150,8 @@
   <output id="portionOutput">1</output>
 
   <!-- 6. Speichern -->
-  <button onclick="exportJSON()">💾 Speichern</button>
+  <br>
+  <button id="saveButton" onclick="exportJSON()">💾 Speichern</button>
 
   <script>
     function addIngredient() {
@@ -143,6 +186,14 @@
       cell4.appendChild(delButton);
     }
 
+    function getRadioValue(name) {
+      const radios = document.getElementsByName(name);
+      for (let radio of radios) {
+        if (radio.checked) return radio.value === "yes";
+      }
+      return null;
+    }
+
     function exportJSON() {
       const imageInput = document.getElementById("image");
       const imageName = imageInput.files.length > 0 ? imageInput.files[0].name : "kein_bild.jpg";
@@ -162,10 +213,10 @@
       const data = {
         image_id: imageName,
         view_angle: "45_degree",
-        full_plate: document.getElementById("full").checked,
-        no_foreign_objects: !document.getElementById("noother").checked,
-        sharp: document.getElementById("sharp").checked,
-        angle_correct: document.getElementById("angle").checked,
+        full_plate: getRadioValue("full"),
+        no_foreign_objects: !getRadioValue("noother"),
+        sharp: getRadioValue("sharp"),
+        angle_correct: getRadioValue("angle"),
         prep_method: document.getElementById("prep").value,
         portions: parseInt(document.getElementById("portions").value),
         ingredients: ingredients
