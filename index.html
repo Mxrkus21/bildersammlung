@@ -2,67 +2,113 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Rezept-Erfasser</title>
+  <title>Bildersammlung</title>
   <style>
     body {
       font-family: sans-serif;
+      background-color: rgb(12, 12, 12);
+      color: #fff;
       max-width: 800px;
       margin: 40px auto;
     }
-    input, select {
-      padding: 5px;
-      margin: 5px;
+
+    label {
+      font-weight: bold;
     }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
+
+    input, select, button {
       padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
     }
-    button {
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 10px;
-      padding: 10px 20px;
+    }
+
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      background: #1a1a1a;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .checkbox-group {
+      margin: 10px 0;
+    }
+
+    .checkbox-group label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    .slider-label {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Rezept-Erfasser</h1>
+  <h1>Bilder sammeln</h1>
 
-  <label for="image">Bild hochladen:</label><br>
-  <input type="file" id="image" accept="image/*"><br><br>
+  <!-- 1. Bild -->
+  <label for="image">📷 Bild hochladen:</label>
+  <input type="file" id="image" accept="image/*">
 
-  <label for="dishType">Gerichtstyp:</label>
-  <select id="dishType">
-    <option>Hauptgericht</option>
-    <option>Suppe</option>
-    <option>Salat</option>
-    <option>Dessert</option>
-    <option>Snack</option>
-    <option>Sonstiges</option>
-  </select><br><br>
-
-  <label for="portions">Portionen:</label>
-  <input type="number" id="portions" min="1" value="1"><br><br>
-
-  <h3>Zutatenliste</h3>
+  <!-- 2. Zutatenliste -->
+  <h3>🍽 Zutatenliste</h3>
   <table id="ingredientsTable">
     <thead>
       <tr>
         <th>Zutat</th>
         <th>Menge</th>
         <th>Einheit</th>
-        <th>Entfernen</th>
+        <th>Löschen</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
+  <button onclick="addIngredient()">Hinzufügen</button>
 
-  <button onclick="addIngredient()">Zutat hinzufügen</button>
-  <button onclick="exportJSON()">JSON speichern</button>
+  <!-- 3. Kontrollfragen -->
+  <h3>📋 Bildqualität</h3>
+  <div class="checkbox-group">
+    <label><input type="checkbox" id="sharp"> Ist das Bild scharf und gut beleuchtet?</label>
+    <label><input type="checkbox" id="angle"> Ist das Bild in einem schrägen Winkel von ca. 45° aufgenommen?</label>
+    <label><input type="checkbox" id="full"> Ist das Essen vollständig im Bild zu sehen ( = kein Millimeter ist abgeschnitten)?</label>
+    <label><input type="checkbox" id="noother"> Ist sonstiges Essen oder Trinken im Bild zu sehen?</label>
+  </div>
+
+  <!-- 4. Zubereitungsart -->
+  <label for="prep">Zubereitungsart:</label>
+  <select id="prep">
+    <option>gekocht</option>
+    <option>gebraten</option>
+    <option>gebacken</option>
+    <option>frittiert</option>
+    <option>sonstiges</option>
+  </select>
+
+  <!-- 5. Portionen -->
+  <label class="slider-label" for="portions">Portionsgröße:</label>
+  <input type="range" id="portions" min="1" max="8" value="1" oninput="portionOutput.value = portions.value">
+  <output id="portionOutput">1</output>
+
+  <!-- 6. Speichern -->
+  <button onclick="exportJSON()">💾 Speichern</button>
 
   <script>
     function addIngredient() {
@@ -98,22 +144,16 @@
     }
 
     function exportJSON() {
-      const dishType = document.getElementById("dishType").value;
-      const portions = parseInt(document.getElementById("portions").value, 10);
-
       const imageInput = document.getElementById("image");
       const imageName = imageInput.files.length > 0 ? imageInput.files[0].name : "kein_bild.jpg";
 
+      const ingredients = [];
       const table = document.getElementById("ingredientsTable").getElementsByTagName('tbody')[0];
       const rows = table.getElementsByTagName('tr');
-
-      const ingredients = [];
-
       for (let row of rows) {
         const name = row.cells[0].querySelector('input').value.trim();
         const amount = parseFloat(row.cells[1].querySelector('input').value);
         const unit = row.cells[2].querySelector('select').value;
-
         if (name && !isNaN(amount)) {
           ingredients.push({ name, amount, unit });
         }
@@ -122,10 +162,12 @@
       const data = {
         image_id: imageName,
         view_angle: "45_degree",
-        full_plate: true,
-        no_foreign_objects: true,
-        dish_type: dishType,
-        portions: portions,
+        full_plate: document.getElementById("full").checked,
+        no_foreign_objects: !document.getElementById("noother").checked,
+        sharp: document.getElementById("sharp").checked,
+        angle_correct: document.getElementById("angle").checked,
+        prep_method: document.getElementById("prep").value,
+        portions: parseInt(document.getElementById("portions").value),
         ingredients: ingredients
       };
 
@@ -135,7 +177,9 @@
       a.download = "rezept.json";
       a.click();
     }
-  </script>
 
+    // Initiale Zutat hinzufügen
+    window.onload = addIngredient;
+  </script>
 </body>
 </html>
