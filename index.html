@@ -10,17 +10,24 @@
       color: #fff;
       max-width: 800px;
       margin: 40px auto;
+      padding: 20px;
     }
 
-    label {
-      font-weight: bold;
+    label, h3, .question-block {
+      margin-top: 20px;
+      display: block;
     }
 
-    input, select, button {
+    input, select {
       padding: 8px;
-      margin: 5px 0;
+      margin-top: 5px;
+      margin-bottom: 20px;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    select {
+      width: 100%;
     }
 
     table {
@@ -40,9 +47,9 @@
       color: white;
       border: none;
       cursor: pointer;
-      font-size: 14px;
-      padding: 6px 12px;
-      width: auto;
+      font-size: 15px;
+      padding: 10px 18px;
+      margin-top: 20px;
     }
 
     button:hover {
@@ -50,11 +57,8 @@
     }
 
     .slider-label {
-      margin-top: 10px;
-    }
-
-    .radio-group {
-      margin: 8px 0;
+      margin-top: 20px;
+      display: block;
     }
 
     .radio-group label {
@@ -63,16 +67,12 @@
     }
 
     .question-block {
-      margin: 15px 0;
-    }
-
-    #prep {
-      width: auto;
-      padding: 6px;
+      margin: 20px 0;
     }
 
     #saveButton {
-      margin-top: 20px;
+      font-size: 16px;
+      padding: 12px 24px;
     }
   </style>
 </head>
@@ -85,7 +85,7 @@
   <input type="file" id="image" accept="image/*">
 
   <!-- 2. Zutatenliste -->
-  <h3>🍽 Zutatenliste 2</h3>
+  <h3>🍽 Zutatenliste</h3>
   <table id="ingredientsTable">
     <thead>
       <tr>
@@ -150,7 +150,6 @@
   <output id="portionOutput">1</output>
 
   <!-- 6. Speichern -->
-  <br>
   <button id="saveButton" onclick="exportJSON()">💾 Speichern</button>
 
   <script>
@@ -229,7 +228,6 @@
       a.click();
     }
 
-    // Initiale Zutat hinzufügen
     window.onload = addIngredient;
   </script>
 </body>
