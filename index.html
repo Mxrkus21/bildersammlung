@@ -257,7 +257,7 @@
             }
         }
         async function uploadToR2(key, file, type) {
-            const url = `https://${CLOUDFLARE_CONFIG.bucketName}.${CLOUDFLARE_CONFIG.accountId}.r2.cloudflarestorage.com/${key}`;
+            const url = `https://${CLOUDFLARE_CONFIG.bucketName}.${CLOUDFLARE_CONFIG.accountId}.r2.dev/${key}`;
             const headers = {
                 'Authorization': `Bearer ${CLOUDFLARE_CONFIG.apiToken}`,
                 'Content-Type': type === 'image' ? file.type : 'application/json'
