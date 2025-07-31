@@ -228,22 +228,31 @@
                 const timestamp = new Date().toISOString();
                 const dataId = `data_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                 const metadata = {
-                    id: dataId,
-                    time: timestamp,
-                    image: imageFile.name,
-                    fully_vis: getRadioValue('fully_visible'),
-                    others: getRadioValue('other_food'),
-                    sharp: getRadioValue('sharp_light'),
-                    angle: getRadioValue('is_45_degree'),
-                    prep_method: document.getElementById('prep').value,
-                    portions: parseInt(document.getElementById('portions').value),
-                    ingredients: ingredients,
+                    id:           dataId,
+                    time:         timestamp,
+                    fully_visible: getRadioValue('fully_visible'),
+                    other_food:    getRadioValue('other_food'),
+                    sharp_light:   getRadioValue('sharp_light'),
+                    is_45_degree:  getRadioValue('is_45_degree'),
+                    prep:          document.getElementById('prep').value,
+                    portions:      parseInt(document.getElementById('portions').value, 10),
+                    ingredients
                 };
-                const imageKey = `images/${dataId}_${imageFile.name}`;
-                await uploadToProxy(imageKey, imageFile);
-                const metadataBlob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' });
-                const metadataKey = `metadata/${dataId}.json`;
-                await uploadToProxy(metadataKey, metadataBlob);
+
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                formData.append('metadata', JSON.stringify(metadata));
+
+                const response = await fetch('https://quiet-brook-23c6.markusbaier2004.workers.dev/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Upload fehlgeschlagen: ${text}`);
+                }
                 addUploadToHistory();
                 showStatus('Daten erfolgreich gespeichert!', 'success');
                 const history = getUploadHistory();
@@ -261,21 +270,6 @@
             }
         }
 
-        async function uploadToProxy(key, file) {
-            const form = new FormData();
-            form.append('file', file);
-            form.append('key', key);
-
-            const response = await fetch('https://quiet-brook-23c6.markusbaier2004.workers.dev/', {
-                method: 'POST',
-                body: form
-            });
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(`Upload fehlgeschlagen: ${text}`);
-            }
-            }
-        
         document.addEventListener('DOMContentLoaded', function() {
             addHoneypot();
             const history = getUploadHistory();
