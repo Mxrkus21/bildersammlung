@@ -242,36 +242,35 @@
         }
       }
     
-      // ✅ data DEFINIEREN NACH der Schleife!
-      const data = {
-        image_id: imageName,
-        view_angle: "45_degree",
-        full_plate: getRadioValue("full"),
-        no_foreign_objects: !getRadioValue("noother"),
-        sharp: getRadioValue("sharp"),
-        angle_correct: getRadioValue("angle"),
-        prep_method: document.getElementById("prep").value,
-        portions: parseInt(document.getElementById("portions").value),
-        ingredients: ingredients
-      };
-    
-      const endpointURL = "https://script.google.com/macros/s/AKfycbzKtRyhpkPoduSqEapS6rsErV4lfynjswNOk4t7T537w6UHnEWOBnZyKAiudlMhes6Y/exec";
-    
-      fetch(endpointURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.text())
-      .then(text => {
-        alert("Gesendet: " + text);
-      })
-      .catch(error => {
-        alert("Fehler beim Senden: " + error);
-      });
-    }
+    const data = {
+      image_id: imageName,
+      view_angle: "45_degree",
+      full_plate: getRadioValue("full"),
+      no_foreign_objects: !getRadioValue("noother"),
+      sharp: getRadioValue("sharp"),
+      angle_correct: getRadioValue("angle"),
+      prep_method: document.getElementById("prep").value,
+      portions: parseInt(document.getElementById("portions").value),
+      ingredients: ingredients
+    };
+  
+    const endpointURL = "https://script.google.com/macros/s/AKfycbzKtRyhpkPoduSqEapS6rsErV4lfynjswNOk4t7T537w6UHnEWOBnZyKAiudlMhes6Y/exec";
+  
+    fetch(endpointURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.text())
+    .then(text => {
+      alert("Gesendet: " + text);
+    })
+    .catch(error => {
+      alert("Fehler beim Senden: " + error);
+    });
+  }
 
     window.onload = addIngredient;
   </script>
