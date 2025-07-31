@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Bildersammlung für KI 2</title>
+  <title>Bildersammlung für KI</title>
   <style>
     body {
       font-family: sans-serif;
@@ -239,14 +239,6 @@
         if (name && !isNaN(amount)) {
           ingredients.push({ name, amount, unit });
         }
-        fetch("https://script.google.com/macros/s/AKfycbzKtRyhpkPoduSqEapS6rsErV4lfynjswNOk4t7T537w6UHnEWOBnZyKAiudlMhes6Y/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        })
-        .then(res => alert("Erfolgreich gesendet"))
-        .catch(err => alert("Fehler beim Senden: " + err));
-      }
 
       const data = {
         image_id: imageName,
@@ -260,11 +252,22 @@
         ingredients: ingredients
       };
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "rezept.json";
-      a.click();
+      const endpointURL = "https://script.google.com/macros/s/AKfycbzKtRyhpkPoduSqEapS6rsErV4lfynjswNOk4t7T537w6UHnEWOBnZyKAiudlMhes6Y/exec";
+
+      fetch(endpointURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(text => {
+        alert("Gesendet: " + text);
+      })
+      .catch(error => {
+        alert("Fehler beim Senden: " + error);
+      });
     }
 
     window.onload = addIngredient;
