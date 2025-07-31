@@ -239,6 +239,13 @@
         if (name && !isNaN(amount)) {
           ingredients.push({ name, amount, unit });
         }
+        fetch("https://script.google.com/macros/s/AKfycbzKtRyhpkPoduSqEapS6rsErV4lfynjswNOk4t7T537w6UHnEWOBnZyKAiudlMhes6Y/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+        .then(res => alert("Erfolgreich gesendet"))
+        .catch(err => alert("Fehler beim Senden: " + err));
       }
 
       const data = {
